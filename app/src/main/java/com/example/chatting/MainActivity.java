@@ -40,7 +40,10 @@ public class MainActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
+                        ChatData chat = new ChatData();
                         if(document != null){
+                            chat.setNickname(document.get("nickname").toString());
+                            ChatActivity.nick = document.get("nickname").toString();
                             if (document.exists()) {
                                 if(document.getData() == null) {
                                     Log.d(TAG, "abcd");
@@ -62,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         chat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 myStartActivity(ChatActivity.class);
             }
         });

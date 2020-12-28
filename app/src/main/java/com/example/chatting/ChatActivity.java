@@ -31,6 +31,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,45 +57,50 @@ public class ChatActivity extends AppCompatActivity {
         Button_send = findViewById(R.id.send);
         EditText_chat = findViewById(R.id.EditText_chat);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Button_send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String msg = EditText_chat.getText().toString();
+                ChatData chat = new ChatData();
+                chat.setNickname(nick);
+                chat.setMassage(msg);
+                myRef.push().setValue(chat);
+                EditText_chat.setText(null);
+            }
+        });
 
-        if(user == null) {
-            myStartActivity(LoginActivity.class);
-        } else {
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference docRef = db.collection("user").document(user.getUid());
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if(document != null){
-                            if (document.exists()) {
-                                Log.d(TAG, "DocumentSnapshot data: " + document.get("nickname"));
-                                nick = document.get("nickname").toString();
-                            } else {
-                                myStartActivity(MemberActivity.class);
-                                Log.d(TAG, "No such document");
-                            }
-                        } else {
-                            Log.d(TAG, "get failed with ", task.getException());
-                        }
-                    }
-                }
-            });
-        }
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        myRef = database.getReference();
 
+        myRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Log.d("CHATCHAT", snapshot.getValue().toString());
+                ChatData chat = snapshot.getValue(ChatData.class);
+                ((ChatAdapter) mAdapter).addChat(chat);
+            }
 
-            Button_send.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String msg = EditText_chat.getText().toString();
-                    ChatData chat = new ChatData();
-                    chat.setNickname(nick);
-                    chat.setMassage(msg);
-                    myRef.push().setValue(chat);
-                }
-            });
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
             mRecyclerview = findViewById(R.id.recycler_view);
             mRecyclerview.setHasFixedSize(true);
@@ -105,46 +111,6 @@ public class ChatActivity extends AppCompatActivity {
             mAdapter = new ChatAdapter(chatlist, nick);
             mRecyclerview.setAdapter(mAdapter);
 
-            // Write a message to the database
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            myRef = database.getReference();
-
-            myRef.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    Log.d("CHATCHAT", snapshot.getValue().toString());
-                    ChatData chat = snapshot.getValue(ChatData.class);
-                    ((ChatAdapter) mAdapter).addChat(chat);
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-            //1. recyclerView - 반복
-
         }
-
-    private void myStartActivity(Class c){
-        Intent intent = new Intent(getApplicationContext(), c);
-        startActivity(intent);
-    }
-
 
 }

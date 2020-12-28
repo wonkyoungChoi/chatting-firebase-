@@ -57,7 +57,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         holder.TextView_msg.setText(chat.getMassage()); //DTO
 
 
-        if(chat.getNickname() != null && chat.getNickname().equals(this.myNickname)) {
+        if(chat.getNickname() != null && chat.getNickname().equals(ChatActivity.nick)) {
            holder.TextView_msg.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
            holder.TextView_nickname.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
         } else {
