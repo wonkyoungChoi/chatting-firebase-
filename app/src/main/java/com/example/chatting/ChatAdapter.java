@@ -57,10 +57,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         holder.TextView_msg.setText(chat.getMassage()); //DTO
 
 
-        if(chat.getNickname() != null && chat.getNickname().equals(ChatActivity.nick)) {
+        if(chat.getNickname() != null && chat.getNickname().equals(Fragment_chatting.nick)) {
            holder.TextView_msg.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
            holder.TextView_nickname.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
         } else {
+            Log.d("닉네임", Fragment_chatting.nick);
             holder.TextView_msg.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             holder.TextView_nickname.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         }

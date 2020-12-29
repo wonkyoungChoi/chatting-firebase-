@@ -1,8 +1,11 @@
+/*
 package com.example.chatting;
 
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.chatting.ChatData;
+import com.example.chatting.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -42,7 +45,7 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<ChatData> chatlist;
-    static String nick = null;
+    String nick = null;
     private DatabaseReference myRef;
     private EditText EditText_chat;
     private Button Button_send;
@@ -114,3 +117,4 @@ public class ChatActivity extends AppCompatActivity {
         }
 
 }
+*/
