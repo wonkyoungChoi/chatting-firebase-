@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private Fragment_profile frag1;
     private Fragment_chatting frag2;
     private Fragment_setting frag3;
-    private Fragment_logout frag4;
     static String nick;
 
     private static final String TAG = "MainActivity";
@@ -76,9 +75,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_setting:
                         setFrag(2);
                         break;
-                    case R.id.action_logout:
-                        setFrag(3);
-                        break;
+
                 }
                 return true;
             }
@@ -87,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         frag1 = new Fragment_profile();
         frag2 = new Fragment_chatting();
         frag3 = new Fragment_setting();
-        frag4 = new Fragment_logout();
+
 
         setFrag(1); // 첫 프래그먼트 화면을 무엇으로 지정해줄 것인지 선택.
 
@@ -108,10 +105,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 2:
                 ft.replace(R.id.frame_container, frag3);
-                ft.commit();
-                break;
-            case 3:
-                ft.replace(R.id.frame_container, frag4);
                 ft.commit();
                 break;
         }

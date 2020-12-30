@@ -20,10 +20,4 @@
         android:icon="@drawable/ic_baseline_settings_24"
         android:title="설정"/>
 
-    <item
-        android:id="@+id/action_logout"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_check_24"
-        android:title="로그아웃"/>
-
 </menu>
