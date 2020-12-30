@@ -60,7 +60,7 @@ public class MemberActivity extends AppCompatActivity {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            Member member = new Member(name, nickname, phone, birth);
+            Member member = new Member(name, nickname, phone, birth, user.getUid());
 
             if(user != null) {
                 db.collection("user").document(user.getUid()).set(member)

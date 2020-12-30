@@ -1,5 +1,6 @@
 package com.example.chatting;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,11 +16,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,12 +44,11 @@ public class Fragment_chatting extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<ChatData> chatlist;
-    static String nick = null;
     private DatabaseReference myRef;
     private EditText EditText_chat;
     private Button Button_send;
-
     private static final String TAG = "MainActivity";
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -88,21 +95,23 @@ public class Fragment_chatting extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chatting, container, false);
 
-
         Button_send = v.findViewById(R.id.send);
         EditText_chat = v.findViewById(R.id.EditText_chat);
+
 
         Button_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String msg = EditText_chat.getText().toString();
-                ChatData chat = new ChatData();
-                chat.setNickname(nick);
-                chat.setMassage(msg);
+                ChatData chat = new ChatData(MainActivity.nick, msg);
+                Log.d("SEND", MainActivity.nick + "msg" + msg);
                 myRef.push().setValue(chat);
                 EditText_chat.setText(null);
             }
         });
+
+
+
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
@@ -136,13 +145,16 @@ public class Fragment_chatting extends Fragment {
             }
         });
 
+
+
+
         mRecyclerview = v.findViewById(R.id.recycler_view);
         mRecyclerview.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerview.setLayoutManager(mLayoutManager);
 
         chatlist = new ArrayList<>();
-        mAdapter = new ChatAdapter(chatlist, nick);
+        mAdapter = new ChatAdapter(chatlist, MainActivity.nick);
         mRecyclerview.setAdapter(mAdapter);
         // Inflate the layout for this fragment
         return v;

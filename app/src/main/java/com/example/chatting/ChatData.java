@@ -6,9 +6,14 @@ public class ChatData{
     private String massage;
     private String nickname;
 
-    public String getMassage() {
-        return massage;
+    public ChatData(String nickname, String massage) {
+        this.nickname = nickname;
+        this.massage = massage;
     }
+
+    public ChatData() { }
+
+    public String getMassage() { return massage; }
 
     public void setMassage(String massage) {
         this.massage = massage;

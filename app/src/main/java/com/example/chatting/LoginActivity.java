@@ -17,13 +17,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class LoginActivity extends AppCompatActivity {
     TextView register, findPassword;
     Button login;
     FirebaseAuth mAuth;
-    private static final String TAG = "Register";
+
+    private static final String TAG = "LoginActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,11 +76,41 @@ public class LoginActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     startToast("로그인에 성공하였습니다.");
                                     myStartActivity(MainActivity.class);
+                                    finish();
+
+                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                                    if (user == null) {
+                                        Log.d(TAG, "user null");
+                                    } else {
+                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                        DocumentReference docRef = db.collection("user").document(user.getUid());
+                                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    DocumentSnapshot document = task.getResult();
+                                                    if (document != null) {
+                                                        if (document.exists()) {
+                                                            Log.d("GET", document.get("nickname").toString());
+                                                            MainActivity.nick = document.get("nickname").toString();
+                                                        } else {
+                                                            Log.d(TAG, "No such document");
+                                                        }
+                                                    } else {
+                                                        Log.d(TAG, "get failed with ", task.getException());
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+
                                 } else {
                                     if (task.getException() != null) {
                                         startToast(task.getException().toString());
                                     }
                                 }
+
                             }
                         });
             } else {

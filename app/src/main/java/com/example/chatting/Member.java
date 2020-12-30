@@ -6,12 +6,13 @@ public class Member {
     private String phone;
     private String birth;
 
-    public Member(String name, String nickname, String phone, String birth) {
+    public Member(String name, String nickname, String phone, String birth, String uid) {
         this.name = name;
         this.nickname = nickname;
         this.phone = phone;
         this.birth = birth;
     }
+
 
 
     public String getName() {
@@ -45,4 +46,5 @@ public class Member {
     public void setBirth(String birth) {
         this.birth = birth;
     }
+
 }
