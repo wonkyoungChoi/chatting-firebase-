@@ -40,13 +40,11 @@ import java.util.List;
  */
 public class Fragment_chatting extends Fragment {
 
-    private RecyclerView mRecyclerview;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private List<ChatData> chatlist;
-    private DatabaseReference myRef;
+    static List<ChatData> chatlist = new ArrayList<>();
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference myRef= database.getReference();;
+
     private EditText EditText_chat;
-    private Button Button_send;
     private static final String TAG = "MainActivity";
 
 
@@ -94,68 +92,35 @@ public class Fragment_chatting extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chatting, container, false);
-
+        RecyclerView recyclerView = v.findViewById(R.id.recycler_view);
+        Button Button_send;
         Button_send = v.findViewById(R.id.send);
         EditText_chat = v.findViewById(R.id.EditText_chat);
-
 
         Button_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String msg = EditText_chat.getText().toString();
-                ChatData chat = new ChatData(MainActivity.nick, msg);
-                Log.d("SEND", MainActivity.nick + "msg" + msg);
+                ChatData chat = new ChatData(ChatAdapter.nick, msg);
+                Log.d("SEND", ChatAdapter.nick + "msg" + msg);
                 myRef.push().setValue(chat);
+
                 EditText_chat.setText(null);
             }
         });
 
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
+                LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        MainActivity.chatAdapter = new ChatAdapter(chatlist);
 
-
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        myRef = database.getReference();
-
-        myRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Log.d("CHATCHAT", snapshot.getValue().toString());
-                ChatData chat = snapshot.getValue(ChatData.class);
-                ((ChatAdapter) mAdapter).addChat(chat);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        recyclerView.setAdapter(MainActivity.chatAdapter);
 
 
 
 
-        mRecyclerview = v.findViewById(R.id.recycler_view);
-        mRecyclerview.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerview.setLayoutManager(mLayoutManager);
-
-        chatlist = new ArrayList<>();
-        mAdapter = new ChatAdapter(chatlist, MainActivity.nick);
-        mRecyclerview.setAdapter(mAdapter);
         // Inflate the layout for this fragment
         return v;
     }

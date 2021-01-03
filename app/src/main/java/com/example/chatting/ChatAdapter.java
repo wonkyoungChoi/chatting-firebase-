@@ -24,28 +24,27 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> {
-    private List<ChatData> mDataset;
-    private String myNickname;
+    static String nick;
 
     private static final String TAG = "ChatAdapter";
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView TextView_nickname;
         public TextView TextView_msg;
-        public View rootView;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             TextView_nickname = itemView.findViewById(R.id.TextView_nickname);
             TextView_msg = itemView.findViewById(R.id.TextView_msg);
-            rootView = itemView;
         }
     }
 
-    public ChatAdapter(List<ChatData> myDataset, String myNickname) {
-        mDataset = myDataset;
-        this.myNickname = myNickname;
+    static List<ChatData> chatData;
+
+    public ChatAdapter(List<ChatData> items) {
+        chatData = items;
     }
+
 
     @NonNull
     @Override
@@ -61,18 +60,21 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        ChatData chat = mDataset.get(position);
+        Log.d("position", String.valueOf(position));
+
+        ChatData chat = chatData.get(position);
 
         holder.TextView_nickname.setText(chat.getNickname());
         holder.TextView_msg.setText(chat.getMassage()); //DTO
 
-        if(chat.getNickname()!=null && chat.getNickname().equals(MainActivity.nick)) {
+        if(chat.getNickname()!=null && chat.getNickname().equals(nick)) {
             Log.d("chatNick", chat.getNickname());
-            Log.d("myNick", MainActivity.nick);
+            Log.d("myNick", nick);
             holder.TextView_msg.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
             holder.TextView_nickname.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
         } else {
-            Log.d("myNick", MainActivity.nick);
+            Log.d("WrongchatNick", chat.getNickname());
+            Log.d("WrongmyNick", nick);
             holder.TextView_msg.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
             holder.TextView_nickname.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         }
@@ -82,16 +84,18 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     @Override
     public int getItemCount() {
         //삼항 연산자
-        return mDataset == null ? 0 : mDataset.size();
+        return chatData.size();
     }
 
+
+
     public ChatData getChat(int position) {
-        return mDataset != null ? mDataset.get(position) : null;
+        return chatData != null ? chatData.get(position) : null;
     }
 
     public void addChat(ChatData chat) {
-        mDataset.add(chat);
-        notifyItemInserted(mDataset.size()-1); //갱신
+        chatData.add(chat);
+        notifyItemInserted(chatData.size()-1);
     }
 
 }

@@ -6,7 +6,7 @@ public class Member {
     private String phone;
     private String birth;
 
-    public Member(String name, String nickname, String phone, String birth, String uid) {
+    public Member(String name, String nickname, String phone, String birth) {
         this.name = name;
         this.nickname = nickname;
         this.phone = phone;

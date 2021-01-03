@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
@@ -60,7 +61,7 @@ public class MemberActivity extends AppCompatActivity {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            Member member = new Member(name, nickname, phone, birth, user.getUid());
+            Member member = new Member(name, nickname, phone, birth);
 
             if(user != null) {
                 db.collection("user").document(user.getUid()).set(member)
@@ -68,6 +69,7 @@ public class MemberActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 startToast("회원정보 등록을 성공하였습니다.");
+                                ChatAdapter.nick = nickname;
                                 finish();
                             }
                         })

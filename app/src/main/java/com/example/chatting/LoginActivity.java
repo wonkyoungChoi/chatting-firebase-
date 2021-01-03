@@ -93,8 +93,9 @@ public class LoginActivity extends AppCompatActivity {
                                                     if (document != null) {
                                                         if (document.exists()) {
                                                             Log.d("GET", document.get("nickname").toString());
-                                                            MainActivity.nick = document.get("nickname").toString();
+                                                            ChatAdapter.nick = document.get("nickname").toString();
                                                         } else {
+                                                            myStartActivity(MemberActivity.class);
                                                             Log.d(TAG, "No such document");
                                                         }
                                                     } else {
