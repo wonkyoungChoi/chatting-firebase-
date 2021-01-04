@@ -1,5 +1,6 @@
 package com.example.chatting;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -40,9 +41,12 @@ import java.util.List;
  */
 public class Fragment_chatting extends Fragment {
 
-    static List<ChatData> chatlist = new ArrayList<>();
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference myRef= database.getReference();;
+    private DatabaseReference myRef= database.getReference();
+    ChatAdapter chatAdapter;
+    List<ChatData> chatlist = new ArrayList<>();
+    static int start = 1;
+    ChatData chatData;
 
     private EditText EditText_chat;
     private static final String TAG = "MainActivity";
@@ -75,6 +79,7 @@ public class Fragment_chatting extends Fragment {
         return fragment;
     }
 
+
     public Fragment_chatting() {
         // Required empty public constructor
     }
@@ -88,6 +93,9 @@ public class Fragment_chatting extends Fragment {
         }
     }
 
+
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -96,6 +104,45 @@ public class Fragment_chatting extends Fragment {
         Button Button_send;
         Button_send = v.findViewById(R.id.send);
         EditText_chat = v.findViewById(R.id.EditText_chat);
+
+        if(start == 1) {
+            myRef.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                    Log.d("CHATCHAT", snapshot.getValue().toString());
+                    chatData = snapshot.getValue(ChatData.class);
+                    chatAdapter.addChat(chatData);
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
+                LinearLayoutManager.VERTICAL, false);
+        Log.d("set", "abc");
+        recyclerView.setLayoutManager(layoutManager);
+        chatAdapter = new ChatAdapter(chatlist);
+        recyclerView.setAdapter(chatAdapter);
 
         Button_send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,17 +156,6 @@ public class Fragment_chatting extends Fragment {
                 EditText_chat.setText(null);
             }
         });
-
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
-                LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        MainActivity.chatAdapter = new ChatAdapter(chatlist);
-
-        recyclerView.setAdapter(MainActivity.chatAdapter);
-
-
-
 
         // Inflate the layout for this fragment
         return v;

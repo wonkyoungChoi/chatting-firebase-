@@ -67,6 +67,7 @@ public class Fragment_setting extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_setting, container, false);
 
+        Fragment_chatting.start = 0;
 
         logout = v.findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
@@ -74,9 +75,9 @@ public class Fragment_setting extends Fragment {
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
                 if(ChatAdapter.chatData != null) {
-                    Log.d("settingclear", String.valueOf(ChatAdapter.chatData));
                     ChatAdapter.chatData.clear();
                 }
+                Fragment_chatting.start = 1;
                 Intent intent = new Intent(getActivity(),LoginActivity.class);
                 startActivity(intent);
             }

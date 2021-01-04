@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -43,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private Fragment_setting frag3;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference myRef= database.getReference();
-    static ChatAdapter chatAdapter;
-
 
     private static final String TAG = "MainActivity";
 
@@ -52,7 +51,10 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         moveTaskToBack(true);
-        ChatAdapter.chatData.clear();
+        if(ChatAdapter.chatData != null) {
+            ChatAdapter.chatData.clear();
+        }
+        Fragment_chatting.start = 1;
         FirebaseAuth.getInstance().signOut();
     }
 
@@ -61,37 +63,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        myRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Log.d("CHATCHAT", snapshot.getValue().toString());
-                ChatData chat = snapshot.getValue(ChatData.class);
-                chatAdapter.addChat(chat);
-            }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
 
         // 바텀 네비게이션 뷰
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.action_chatting);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -116,8 +92,7 @@ public class MainActivity extends AppCompatActivity {
         frag3 = new Fragment_setting();
 
 
-        setFrag(0); // 첫 프래그먼트 화면을 무엇으로 지정해줄 것인지 선택.
-
+        setFrag(1); // 첫 프래그먼트 화면을 무엇으로 지정해줄 것인지 선택.
 
     }
     // 프래그먼트 교체가 일어나는 실행문이다.
@@ -140,9 +115,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void myStartActivity(Class c) {
-        Intent intent = new Intent(getApplicationContext(), c);
-        startActivity(intent);
-    }
+
+
 }
 

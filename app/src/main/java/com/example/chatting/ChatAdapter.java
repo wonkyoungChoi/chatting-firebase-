@@ -29,13 +29,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     private static final String TAG = "ChatAdapter";
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView TextView_nickname;
-        public TextView TextView_msg;
+        public TextView TextView_mynickname;
+        public TextView TextView_mymsg;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            TextView_nickname = itemView.findViewById(R.id.TextView_nickname);
-            TextView_msg = itemView.findViewById(R.id.TextView_msg);
+            TextView_mynickname = itemView.findViewById(R.id.TextView_nickname);
+            TextView_mymsg = itemView.findViewById(R.id.TextView_msg);
+
         }
     }
 
@@ -62,21 +63,23 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Log.d("position", String.valueOf(position));
 
+        holder.setIsRecyclable(false);
+
         ChatData chat = chatData.get(position);
 
-        holder.TextView_nickname.setText(chat.getNickname());
-        holder.TextView_msg.setText(chat.getMassage()); //DTO
+        holder.TextView_mynickname.setText(chat.getNickname());
+        holder.TextView_mymsg.setText(chat.getMassage()); //DTO
 
         if(chat.getNickname()!=null && chat.getNickname().equals(nick)) {
             Log.d("chatNick", chat.getNickname());
             Log.d("myNick", nick);
-            holder.TextView_msg.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
-            holder.TextView_nickname.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+            holder.TextView_mymsg.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+            holder.TextView_mynickname.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
         } else {
             Log.d("WrongchatNick", chat.getNickname());
             Log.d("WrongmyNick", nick);
-            holder.TextView_msg.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-            holder.TextView_nickname.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+            holder.TextView_mymsg.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+            holder.TextView_mynickname.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         }
 
     }
@@ -86,7 +89,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         //삼항 연산자
         return chatData.size();
     }
-
 
 
     public ChatData getChat(int position) {
