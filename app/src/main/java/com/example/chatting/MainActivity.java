@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
         // 바텀 네비게이션 뷰
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.action_chatting);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -92,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         frag3 = new Fragment_setting();
 
 
-        setFrag(1); // 첫 프래그먼트 화면을 무엇으로 지정해줄 것인지 선택.
+        setFrag(0); // 첫 프래그먼트 화면을 무엇으로 지정해줄 것인지 선택.
 
     }
     // 프래그먼트 교체가 일어나는 실행문이다.
@@ -114,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-
-
 
 }
 

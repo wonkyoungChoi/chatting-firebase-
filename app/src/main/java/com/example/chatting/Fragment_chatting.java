@@ -2,6 +2,7 @@ package com.example.chatting;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +52,7 @@ public class Fragment_chatting extends Fragment {
     ChatData chatData;
 
     private EditText EditText_chat;
+    private ImageView profileImage;
     private static final String TAG = "MainActivity";
 
 
@@ -112,6 +116,7 @@ public class Fragment_chatting extends Fragment {
                     Log.d("CHATCHAT", snapshot.getValue().toString());
                     chatData = snapshot.getValue(ChatData.class);
                     chatAdapter.addChat(chatData);
+                    start = 0;
                 }
 
                 @Override
@@ -139,7 +144,6 @@ public class Fragment_chatting extends Fragment {
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.VERTICAL, false);
-        Log.d("set", "abc");
         recyclerView.setLayoutManager(layoutManager);
         chatAdapter = new ChatAdapter(chatlist);
         recyclerView.setAdapter(chatAdapter);
@@ -149,7 +153,7 @@ public class Fragment_chatting extends Fragment {
             public void onClick(View v) {
 
                 String msg = EditText_chat.getText().toString();
-                ChatData chat = new ChatData(ChatAdapter.nick, msg);
+                ChatData chat = new ChatData(ChatAdapter.nick, msg, Fragment_profile.uri);
                 Log.d("SEND", ChatAdapter.nick + "msg" + msg);
                 myRef.push().setValue(chat);
 

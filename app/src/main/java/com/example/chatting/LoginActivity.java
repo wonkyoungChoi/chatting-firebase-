@@ -74,9 +74,6 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    startToast("로그인에 성공하였습니다.");
-                                    myStartActivity(MainActivity.class);
-                                    finish();
 
                                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -94,9 +91,12 @@ public class LoginActivity extends AppCompatActivity {
                                                         if (document.exists()) {
                                                             Log.d("GET", document.get("nickname").toString());
                                                             ChatAdapter.nick = document.get("nickname").toString();
+                                                            startToast("로그인에 성공하였습니다.");
+                                                            myStartActivity(MainActivity.class);
+                                                            finish();
                                                         } else {
-                                                            myStartActivity(MemberActivity.class);
                                                             Log.d(TAG, "No such document");
+                                                            myStartActivity(MemberActivity.class);
                                                         }
                                                     } else {
                                                         Log.d(TAG, "get failed with ", task.getException());

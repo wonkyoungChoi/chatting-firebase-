@@ -1,6 +1,9 @@
 package com.example.chatting;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,7 +23,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,9 +46,11 @@ public class Fragment_profile extends Fragment {
     private static final String TAG = "Fragment_profile";
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    List<String> list;
+    static String uri;
 
     private TextView name, nickname, phoneNumber, birth;
+    private ImageView profileImage;
+    Bitmap bm;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -83,8 +97,9 @@ public class Fragment_profile extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Fragment_chatting.start = 0;
+
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        profileImage = v.findViewById(R.id.profileImage);
         name = v.findViewById(R.id.name);
         nickname = v.findViewById(R.id.nickname);
         phoneNumber = v.findViewById(R.id.phoneNumber);
@@ -98,12 +113,12 @@ public class Fragment_profile extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     assert document != null;
-
                     if (document.exists()) {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Map<String, Object> map = document.getData();
-
                         assert map != null;
+                        uri = map.get("profilePic").toString();
+                        Picasso.get().load(Uri.parse(uri)).into(profileImage);
                         name.setText(map.get("name").toString());
                         nickname.setText("닉네임 : " + map.get("nickname").toString());
                         phoneNumber.setText("휴대폰 번호 : " + map.get("phone").toString());
@@ -118,9 +133,9 @@ public class Fragment_profile extends Fragment {
             }
         });
 
-
         // Inflate the layout for this fragment
         return v;
 
     }
+
 }

@@ -1,11 +1,15 @@
 package com.example.chatting;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,6 +20,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.io.IOException;
 
 public class Register extends AppCompatActivity {
     Button register;
@@ -38,16 +44,16 @@ public class Register extends AppCompatActivity {
         });
     }
 
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        moveTaskToBack(true);
-        android.os.Process.killProcess(android.os.Process.myPid());
-        System.exit(1);
+        finish();
     }
 
 
     private void signUp() {
+
         String email = ((EditText) findViewById(R.id.EditText_name)).getText().toString();
         String password = ((EditText) findViewById(R.id.EditText_password)).getText().toString();
         String passwordcheck = ((EditText) findViewById(R.id.EditText_passwordcheck)).getText().toString();

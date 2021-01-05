@@ -67,8 +67,6 @@ public class Fragment_setting extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_setting, container, false);
 
-        Fragment_chatting.start = 0;
-
         logout = v.findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override

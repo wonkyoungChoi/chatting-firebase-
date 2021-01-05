@@ -5,12 +5,14 @@ public class Member {
     private String nickname;
     private String phone;
     private String birth;
+    private String profilePic;
 
-    public Member(String name, String nickname, String phone, String birth) {
+    public Member(String name, String nickname, String phone, String birth, String profilePic) {
         this.name = name;
         this.nickname = nickname;
         this.phone = phone;
         this.birth = birth;
+        this.profilePic = profilePic;
     }
 
 
@@ -47,4 +49,7 @@ public class Member {
         this.birth = birth;
     }
 
+    public String getProfilePic() { return profilePic; }
+
+    public void setProfilePic(String profilePic) { this.profilePic = profilePic; }
 }
