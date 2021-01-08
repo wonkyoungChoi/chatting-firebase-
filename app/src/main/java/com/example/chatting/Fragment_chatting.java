@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,7 +38,9 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Comment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,13 +52,13 @@ public class Fragment_chatting extends Fragment {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference myRef= database.getReference();
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     ChatAdapter chatAdapter;
     List<ChatData> chatlist = new ArrayList<>();
     static int start = 1;
     ChatData chatData;
 
     private EditText EditText_chat;
-    private ImageView profileImage;
     private static final String TAG = "MainActivity";
 
 
@@ -110,20 +114,20 @@ public class Fragment_chatting extends Fragment {
         Button Button_send;
         Button_send = v.findViewById(R.id.send);
         EditText_chat = v.findViewById(R.id.EditText_chat);
-
+        UpdateUri(Fragment_profile.uri);
         if(start == 1) {
-            myRef.addChildEventListener(new ChildEventListener() {
+            myRef.child("Chat").addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                     Log.d("CHATCHAT", snapshot.getValue().toString());
                     chatData = snapshot.getValue(ChatData.class);
                     chatAdapter.addChat(chatData);
+                    recyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
                     start = 0;
                 }
-
                 @Override
                 public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    chatData = snapshot.getValue(ChatData.class);
+
                 }
 
                 @Override
@@ -143,12 +147,15 @@ public class Fragment_chatting extends Fragment {
             });
         }
 
+
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         chatAdapter = new ChatAdapter(chatlist);
         recyclerView.setAdapter(chatAdapter);
+
+
 
         Button_send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,7 +164,7 @@ public class Fragment_chatting extends Fragment {
                 String msg = EditText_chat.getText().toString();
                 ChatData chat = new ChatData(ChatAdapter.nick, msg, Fragment_profile.uri);
                 Log.d("SEND", ChatAdapter.nick + "msg" + msg);
-                myRef.push().setValue(chat);
+                myRef.child("Chat").push().setValue(chat);
 
                 EditText_chat.setText(null);
             }
@@ -166,4 +173,13 @@ public class Fragment_chatting extends Fragment {
         // Inflate the layout for this fragment
         return v;
     }
+
+    private void UpdateUri(String uri ) {
+        if(myRef.child("Chat").child("nickname").toString().equals(ChatAdapter.nick)) {
+            myRef.child("profilePic").setValue(uri);
+            Toast.makeText(getContext(), "Successfully updated user", Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(getContext(), "Fail", Toast.LENGTH_SHORT).show();
+    }
+
 }

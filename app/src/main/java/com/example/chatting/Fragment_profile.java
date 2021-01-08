@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -58,6 +59,8 @@ public class Fragment_profile extends Fragment {
     private static final String TAG = "Fragment_profile";
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference myRef= database.getReference();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     static String uri;
     int PICK_IMAGE_REQUEST = 1;
@@ -242,6 +245,7 @@ public class Fragment_profile extends Fragment {
             }
         });
     }
+
 
 
 }
