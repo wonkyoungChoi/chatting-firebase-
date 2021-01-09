@@ -63,6 +63,7 @@ public class Fragment_profile extends Fragment {
     private DatabaseReference myRef= database.getReference();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     static String uri;
+    static int profileChange = 0;
     int PICK_IMAGE_REQUEST = 1;
 
     Uri uri1, downloadUri;
@@ -228,6 +229,7 @@ public class Fragment_profile extends Fragment {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+                                        profileChange = 1;
                                         Log.d(TAG, "DocumentSnapshot successfully written!");
                                     }
                                 })
@@ -245,6 +247,7 @@ public class Fragment_profile extends Fragment {
             }
         });
     }
+
 
 
 

@@ -3,22 +3,24 @@ package com.example.chatting;
 import java.io.Serializable;
 
 public class ChatData{
-    private String massage;
+    private String message;
     private String nickname;
     private String profilePic;
+    private String key;
 
-    public ChatData(String nickname, String massage, String profilePic) {
+    public ChatData(String nickname, String message, String profilePic, String key) {
         this.nickname = nickname;
-        this.massage = massage;
+        this.message = message;
         this.profilePic = profilePic;
+        this.key = key;
     }
 
     public ChatData() { }
 
-    public String getMassage() { return massage; }
+    public String getMessage() { return message; }
 
-    public void setMassage(String massage) {
-        this.massage = massage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getNickname() {
@@ -32,4 +34,8 @@ public class ChatData{
     public String getProfilePic() { return profilePic; }
 
     public void setProfilePic(String profilePic) { this.profilePic = profilePic; }
+
+    public String getKey() { return key; }
+
+    public void setKey(String key) { this.key = key; }
 }

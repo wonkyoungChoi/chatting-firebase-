@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -20,6 +21,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -30,6 +33,10 @@ import java.util.List;
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> {
     static String nick;
     private static final String TAG = "ChatAdapter";
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference myRef= database.getReference();
+    String key = Fragment_chatting.key;
+    ChatData chat;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView TextView_nickname;
@@ -74,12 +81,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
 
         holder.setIsRecyclable(false);
 
-        ChatData chat = chatData.get(position);
-
-
+        chat = chatData.get(position);
+        key = chat.getKey();
+        UpdateUri(Fragment_profile.uri);
 
         holder.TextView_nickname.setText(chat.getNickname());
-        holder.TextView_msg.setText(chat.getMassage()); //DTO
+        holder.TextView_msg.setText(chat.getMessage()); //DTO
         Picasso.get().load(Uri.parse(chat.getProfilePic())).into(holder.myImage);
         Picasso.get().load(Uri.parse(chat.getProfilePic())).into(holder.otherImage);
 
@@ -112,6 +119,22 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     public void addChat(ChatData chat) {
         chatData.add(chat);
         notifyItemInserted(chatData.size()-1);
+    }
+
+    public void updateProfile(List<ChatData> chat) {
+        chatData.clear();
+        chatData.addAll(chat);
+        this.notifyDataSetChanged();
+    }
+
+
+    private void UpdateUri(String uri ) {
+        if(myRef.child("Chat").child(key).child("nickname") != null && chat.getNickname().equals(ChatAdapter.nick)) {
+            myRef.child("Chat").child(key).child("profilePic").setValue(uri);
+            Log.d("success", myRef.child("Chat").child(key).child("profilePic").toString());
+        } else {
+            Log.d("fail", key +" ... " + chat.getNickname());
+        }
     }
 
 }

@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,9 +37,7 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Comment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,14 +49,14 @@ public class Fragment_chatting extends Fragment {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference myRef= database.getReference();
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     ChatAdapter chatAdapter;
     List<ChatData> chatlist = new ArrayList<>();
     static int start = 1;
     ChatData chatData;
-
+    static String key;
     private EditText EditText_chat;
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "Fragment_chatting";
+    int profileChange = Fragment_profile.profileChange;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -105,7 +102,6 @@ public class Fragment_chatting extends Fragment {
 
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -114,8 +110,8 @@ public class Fragment_chatting extends Fragment {
         Button Button_send;
         Button_send = v.findViewById(R.id.send);
         EditText_chat = v.findViewById(R.id.EditText_chat);
-        UpdateUri(Fragment_profile.uri);
-        if(start == 1) {
+
+        if (start == 1) {
             myRef.child("Chat").addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -125,6 +121,7 @@ public class Fragment_chatting extends Fragment {
                     recyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
                     start = 0;
                 }
+
                 @Override
                 public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
@@ -153,19 +150,23 @@ public class Fragment_chatting extends Fragment {
                 LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         chatAdapter = new ChatAdapter(chatlist);
+        if(profileChange == 1) {
+            chatAdapter.updateProfile(chatlist);
+            profileChange = 0;
+        }
         recyclerView.setAdapter(chatAdapter);
-
-
 
         Button_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                key = myRef.push().getKey();
                 String msg = EditText_chat.getText().toString();
-                ChatData chat = new ChatData(ChatAdapter.nick, msg, Fragment_profile.uri);
+                ChatData chat = new ChatData(ChatAdapter.nick, msg, Fragment_profile.uri, key);
                 Log.d("SEND", ChatAdapter.nick + "msg" + msg);
-                myRef.child("Chat").push().setValue(chat);
-
+                myRef.child("Chat").child(key).setValue(chat);
+                if(ChatAdapter.chatData.size()>1) {
+                    recyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 2);
+                }
                 EditText_chat.setText(null);
             }
         });
@@ -174,12 +175,5 @@ public class Fragment_chatting extends Fragment {
         return v;
     }
 
-    private void UpdateUri(String uri ) {
-        if(myRef.child("Chat").child("nickname").toString().equals(ChatAdapter.nick)) {
-            myRef.child("profilePic").setValue(uri);
-            Toast.makeText(getContext(), "Successfully updated user", Toast.LENGTH_SHORT).show();
-        } else
-            Toast.makeText(getContext(), "Fail", Toast.LENGTH_SHORT).show();
-    }
 
 }
