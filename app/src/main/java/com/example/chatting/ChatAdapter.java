@@ -36,7 +36,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference myRef= database.getReference();
     String key = Fragment_chatting.key;
-    ChatData chat;
+    static ChatData chat;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView TextView_nickname;
@@ -58,9 +58,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
 
     static List<ChatData> chatData;
 
-    public ChatAdapter(List<ChatData> items) {
-        chatData = items;
-    }
+    public ChatAdapter(List<ChatData> items) { chatData = items; }
 
 
     @NonNull
@@ -82,6 +80,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         holder.setIsRecyclable(false);
 
         chat = chatData.get(position);
+        //Log.d(TAG + "chat1", chat.getProfilePic());
         key = chat.getKey();
         UpdateUri(Fragment_profile.uri);
 
@@ -121,20 +120,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         notifyItemInserted(chatData.size()-1);
     }
 
-    public void updateProfile(List<ChatData> chat) {
-        chatData.clear();
-        chatData.addAll(chat);
-        this.notifyDataSetChanged();
-    }
-
 
     private void UpdateUri(String uri ) {
         if(myRef.child("Chat").child(key).child("nickname") != null && chat.getNickname().equals(ChatAdapter.nick)) {
+            chat.setProfilePic(uri);
             myRef.child("Chat").child(key).child("profilePic").setValue(uri);
             Log.d("success", myRef.child("Chat").child(key).child("profilePic").toString());
+            Log.d("success2", uri);
         } else {
             Log.d("fail", key +" ... " + chat.getNickname());
         }
     }
+
 
 }

@@ -1,5 +1,6 @@
 package com.example.chatting;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -51,6 +52,7 @@ public class MemberActivity extends AppCompatActivity {
     Bitmap bitmap;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    ProgressDialog mProgressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,6 +82,30 @@ public class MemberActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+
+            uri = data.getData();
+
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), uri);
+                // Log.d(TAG, String.valueOf(bitmap));
+                Toast.makeText(this, "프로필 이미지 선택" , Toast.LENGTH_SHORT).show();
+                mProgressDialog = new ProgressDialog(this);
+                mProgressDialog.setMessage("업로드 중...");
+                mProgressDialog.show();
+                showUserProfile.setImageBitmap(bitmap);
+                addUserInDatabse();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
 
     @Override
@@ -97,7 +123,7 @@ public class MemberActivity extends AppCompatActivity {
         byte[] data = bytes.toByteArray();
 
         StorageReference storageRef = storage.getReference();
-        StorageReference ImagesRef = storageRef.child("users/" + user.getUid() + "/profileImage.jpg");
+        StorageReference ImagesRef = storageRef.child("users/" + user.getEmail() + "/profileImage.jpg");
 
         UploadTask uploadTask = ImagesRef.putBytes(data);
 
@@ -118,6 +144,7 @@ public class MemberActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     downloadUri = task.getResult();
                     downuri = downloadUri.toString();
+                    mProgressDialog.dismiss();
                     Log.d("성공", "성공" + downloadUri);
                 } else {
                     Log.d("실패2", "실패");
@@ -126,27 +153,6 @@ public class MemberActivity extends AppCompatActivity {
         });
     }
 
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-
-            uri = data.getData();
-
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), uri);
-                // Log.d(TAG, String.valueOf(bitmap));
-                Toast.makeText(this, "프로필 이미지 선택" , Toast.LENGTH_SHORT).show();
-                showUserProfile.setImageBitmap(bitmap);
-                addUserInDatabse();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     private void profileUpdate() {
         String name = ((EditText) findViewById(R.id.name)).getText().toString();
@@ -181,7 +187,7 @@ public class MemberActivity extends AppCompatActivity {
                         });
             }
         } else {
-            startToast("회원정보를 정확하게 입력해주세요. \n정보를 정확하게 입력했다면 잠시 기다린 후 다시 시도해주세요." );
+            startToast("회원정보를 정확하게 입력해주세요." );
         }
     }
 

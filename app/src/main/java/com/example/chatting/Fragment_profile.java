@@ -2,6 +2,7 @@ package com.example.chatting;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -63,13 +64,13 @@ public class Fragment_profile extends Fragment {
     private DatabaseReference myRef= database.getReference();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     static String uri;
-    static int profileChange = 0;
     int PICK_IMAGE_REQUEST = 1;
 
     Uri uri1, downloadUri;
     private ImageView profileImage;
     String downuri;
     Bitmap bitmap;
+    ProgressDialog mProgressDialog;
 
     private TextView name, nickname, phoneNumber, birth;
 
@@ -115,11 +116,13 @@ public class Fragment_profile extends Fragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+
         profileImage = v.findViewById(R.id.profileImage);
         name = v.findViewById(R.id.name);
         nickname = v.findViewById(R.id.nickname);
@@ -162,6 +165,7 @@ public class Fragment_profile extends Fragment {
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 // Always show the chooser (if there are multiple options available)
+
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
             }
         });
@@ -184,16 +188,19 @@ public class Fragment_profile extends Fragment {
                 bitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), uri1);
                 // Log.d(TAG, String.valueOf(bitmap));
                 Toast.makeText(getActivity().getApplicationContext() , "프로필 이미지 변경" , Toast.LENGTH_SHORT).show();
-                profileImage.setImageBitmap(bitmap);
-                addUserInDatabse();
+                mProgressDialog = new ProgressDialog(getContext());
 
+                mProgressDialog.setMessage("업로드 중...");
+                mProgressDialog.show();
+                profileImage.setImageBitmap(bitmap);
+                addUserInDatabase();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void addUserInDatabse(){
+    private void addUserInDatabase(){
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
@@ -223,19 +230,21 @@ public class Fragment_profile extends Fragment {
                     downuri = downloadUri.toString();
                     Map<String, Object> docData = new HashMap<>();
                     docData.put("profilePic", downuri);
+                    uri = downuri;
 
                     if(user != null) {
                         db.collection("user").document(user.getUid()).update(docData)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        profileChange = 1;
                                         Log.d(TAG, "DocumentSnapshot successfully written!");
+                                        mProgressDialog.dismiss();
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(getActivity().getApplicationContext() , "프로필 이미지 변경실패" , Toast.LENGTH_SHORT).show();
                                         Log.w(TAG, "Error updating document", e);
                                     }
                                 });

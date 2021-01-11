@@ -56,7 +56,7 @@ public class Fragment_chatting extends Fragment {
     static String key;
     private EditText EditText_chat;
     private static final String TAG = "Fragment_chatting";
-    int profileChange = Fragment_profile.profileChange;
+    ChildEventListener childEventListener;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -100,6 +100,12 @@ public class Fragment_chatting extends Fragment {
         }
     }
 
+    @Override
+    public void onPause() {
+        Log.d(TAG, "remove");
+        myRef.child("Chat").removeEventListener(childEventListener);
+        super.onPause();
+    }
 
 
     @Override
@@ -110,39 +116,44 @@ public class Fragment_chatting extends Fragment {
         Button Button_send;
         Button_send = v.findViewById(R.id.send);
         EditText_chat = v.findViewById(R.id.EditText_chat);
+        chatlist.clear();
 
-        if (start == 1) {
-            myRef.child("Chat").addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    Log.d("CHATCHAT", snapshot.getValue().toString());
-                    chatData = snapshot.getValue(ChatData.class);
-                    chatAdapter.addChat(chatData);
-                    recyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
-                    start = 0;
-                }
+        childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("CHATCHAT", dataSnapshot.getValue().toString());
+                chatData = dataSnapshot.getValue(ChatData.class);
+                chatAdapter.addChat(chatData);
+                recyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
+                start = 0;
+            }
 
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
 
-                }
+            }
 
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
 
-                }
+            }
 
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
 
-                }
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
-        }
+            }
+        };
+        myRef.child("Chat").addChildEventListener(childEventListener);
+
+
 
 
         recyclerView.setHasFixedSize(true);
@@ -150,10 +161,7 @@ public class Fragment_chatting extends Fragment {
                 LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         chatAdapter = new ChatAdapter(chatlist);
-        if(profileChange == 1) {
-            chatAdapter.updateProfile(chatlist);
-            profileChange = 0;
-        }
+
         recyclerView.setAdapter(chatAdapter);
 
         Button_send.setOnClickListener(new View.OnClickListener() {
@@ -165,7 +173,7 @@ public class Fragment_chatting extends Fragment {
                 Log.d("SEND", ChatAdapter.nick + "msg" + msg);
                 myRef.child("Chat").child(key).setValue(chat);
                 if(ChatAdapter.chatData.size()>1) {
-                    recyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 2);
+                    recyclerView.smoothScrollToPosition(chatAdapter.getItemCount());
                 }
                 EditText_chat.setText(null);
             }
@@ -174,6 +182,5 @@ public class Fragment_chatting extends Fragment {
         // Inflate the layout for this fragment
         return v;
     }
-
 
 }
