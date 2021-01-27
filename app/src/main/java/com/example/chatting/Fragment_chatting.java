@@ -125,7 +125,6 @@ public class Fragment_chatting extends Fragment {
                 chatData = dataSnapshot.getValue(ChatData.class);
                 chatAdapter.addChat(chatData);
                 recyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
-                start = 0;
             }
 
             @Override
@@ -152,9 +151,6 @@ public class Fragment_chatting extends Fragment {
             }
         };
         myRef.child("Chat").addChildEventListener(childEventListener);
-
-
-
 
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
