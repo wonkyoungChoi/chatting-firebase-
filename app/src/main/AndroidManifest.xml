@@ -17,13 +17,23 @@
             android:theme="@style/Theme.Chatting.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".Register" />
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".MainFragment"/>
         <activity android:name=".PasswordResetActivity" />
         <activity android:name=".MemberActivity" />
+        <activity android:name=".Board.AddBoard"/>
+        <activity android:name=".Board.InBoardActivity"/>
+        <service
+            android:name="MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
+
+
 </manifest>

@@ -1,66 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:textSize="12sp"
-        android:id="@+id/TextView_nickname"
+    <RelativeLayout
+        android:id="@+id/otherLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginEnd="5dp"
-        tools:ignore="RtlHardcoded" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView
+            android:layout_alignParentStart="true"
             android:id="@+id/otherchatprofile"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            app:cardCornerRadius="100dp">
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            app:cardCornerRadius="100dp"
+            android:layout_alignParentLeft="true">
+
             <ImageView
                 android:id="@+id/otherImage"
-                android:layout_width="25dp"
-                android:layout_height="25dp" />
+                android:layout_width="50dp"
+                android:layout_height="50dp" />
         </androidx.cardview.widget.CardView>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/TextView_othernickname"
+            android:layout_toRightOf="@id/otherchatprofile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="상대 닉네임"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginLeft="10dp"
+            android:gravity="center"
+            android:textSize="12sp"
+            tools:ignore="RtlHardcoded" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/mychatprofile"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_gravity="end"
-            app:cardCornerRadius="100dp">
+        <TextView
+            android:id="@+id/TextView_othermsg"
+            android:layout_toRightOf="@id/otherchatprofile"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/TextView_othernickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_chat_other"
+            android:text="상대 채팅"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginLeft="10dp"
+            android:padding="10dp"
+            android:textSize="15sp"
+            tools:ignore="RtlHardcoded" />
 
-            <ImageView
-                android:id="@+id/myImage"
-                android:layout_gravity="end"
-                android:layout_width="25dp"
-                android:layout_height="25dp" />
-        </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/other_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/TextView_othermsg"
+            android:text="timestamp"
+            android:textSize="8sp"
+            android:layout_marginLeft="10dp"
+            android:layout_alignBottom="@+id/TextView_othermsg"
+            android:textColor="#D3D3D3"/>
 
-    </LinearLayout>
 
-    <TextView
-        android:textSize="20sp"
-        android:id="@+id/TextView_msg"
-        android:layout_marginRight="2dp"
-        android:gravity="right"
+    </RelativeLayout>
+
+
+
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="2dp"
-        tools:ignore="RtlHardcoded" />
-</LinearLayout>
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_alignParentEnd="true"
+            android:id="@+id/TextView_mymsg"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_chat_my"
+            android:text="내 채팅"
+            android:layout_marginRight="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            tools:ignore="RtlHardcoded"
+            android:layout_alignParentRight="true" />
+        <TextView
+            android:id="@+id/my_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="timestamp"
+            android:textSize="8sp"
+            android:layout_marginRight="10dp"
+            android:layout_alignBottom="@+id/TextView_mymsg"
+            android:textColor="#D3D3D3"
+            android:layout_toLeftOf="@+id/TextView_mymsg" />
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

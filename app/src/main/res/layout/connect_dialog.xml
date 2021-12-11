@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        android:id="@+id/dialog"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:textColor="@color/black"
+            android:layout_centerHorizontal="true"
+            android:textSize="20sp"
+            android:layout_alignParentTop="true"
+            android:text="연결상대 설정" />
+
+        <RelativeLayout
+            android:id="@+id/check_layout"
+            android:layout_below="@id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true">
+
+            <EditText
+                android:id="@+id/otherEmail"
+                android:hint="이메일(ID)"
+                android:layout_marginStart="20dp"
+                android:background="@drawable/edit_line"
+                android:textColor="@color/black"
+                android:padding="5dp"
+                android:layout_width="200dp"
+                android:textSize="15sp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp" />
+
+            <TextView
+                android:id="@+id/connect_check"
+                android:text="상대 연결여부 확인"
+                android:layout_centerVertical="true"
+                android:textColor="#3B5998"
+                android:layout_marginStart="10dp"
+                android:layout_toRightOf="@id/otherEmail"
+                android:padding="5dp"
+                android:layout_width="wrap_content"
+                android:textSize="10sp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp" />
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_marginTop="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/check_layout">
+
+            <Button
+                android:id="@+id/noBtn"
+                android:layout_width="0dp"
+                android:background="@drawable/button_left_line"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:layout_weight="1"
+                android:text="아니오" />
+
+            <Button
+                android:id="@+id/yesBtn"
+                android:layout_width="0dp"
+                android:background="@drawable/button_right_line"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="연결하기" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</LinearLayout>

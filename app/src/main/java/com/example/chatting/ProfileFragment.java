@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -17,10 +16,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.chatting.databinding.FragmentProfileBinding;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -28,8 +26,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -38,41 +34,36 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link Fragment_profile#newInstance} factory method to
+ * Use the {@link ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Fragment_profile extends Fragment {
+public class ProfileFragment extends Fragment {
     private static final String TAG = "Fragment_profile";
+
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference myRef= database.getReference();
+
     FirebaseStorage storage = FirebaseStorage.getInstance();
-    static String uri;
+
+    public static String uri;
     int PICK_IMAGE_REQUEST = 1;
 
     Uri uri1, downloadUri;
-    private ImageView profileImage;
+
     String downuri;
     Bitmap bitmap;
     ProgressDialog mProgressDialog;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    private TextView name, nickname, phoneNumber, birth;
+    FragmentProfileBinding binding;
+
+    public static String otherUid;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -83,7 +74,7 @@ public class Fragment_profile extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public Fragment_profile() {
+    public ProfileFragment() {
         // Required empty public constructor
     }
 
@@ -96,8 +87,8 @@ public class Fragment_profile extends Fragment {
      * @return A new instance of fragment Fragment_profile.
      */
     // TODO: Rename and change types and number of parameters
-    public static Fragment_profile newInstance(String param1, String param2) {
-        Fragment_profile fragment = new Fragment_profile();
+    public static ProfileFragment newInstance(String param1, String param2) {
+        ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -120,44 +111,13 @@ public class Fragment_profile extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        binding = FragmentProfileBinding.inflate(inflater, container, false);
+        View v = binding.getRoot();
 
-        View v = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        profileImage = v.findViewById(R.id.profileImage);
-        name = v.findViewById(R.id.name);
-        nickname = v.findViewById(R.id.nickname);
-        phoneNumber = v.findViewById(R.id.phoneNumber);
-        birth = v.findViewById(R.id.birth);
+        setMyInfo();
 
-        DocumentReference docRef = db.collection("user").document(user.getUid());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    assert document != null;
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        Map<String, Object> map = document.getData();
-                        assert map != null;
-                        uri = map.get("profilePic").toString();
-                        Picasso.get().load(Uri.parse(uri)).into(profileImage);
-                        name.setText(map.get("name").toString());
-                        nickname.setText("닉네임 : " + map.get("nickname").toString());
-                        phoneNumber.setText("휴대폰 번호 : " + map.get("phone").toString());
-                        birth.setText("생일 : " + map.get("birth").toString());
-
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-
-        profileImage.setOnClickListener(new View.OnClickListener() {
+        binding.profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -192,7 +152,7 @@ public class Fragment_profile extends Fragment {
 
                 mProgressDialog.setMessage("업로드 중...");
                 mProgressDialog.show();
-                profileImage.setImageBitmap(bitmap);
+                binding.profileImage.setImageBitmap(bitmap);
                 addUserInDatabase();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -257,7 +217,36 @@ public class Fragment_profile extends Fragment {
         });
     }
 
+    private void setMyInfo() {
+        DocumentReference docRef = db.collection("user").document(user.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    assert document != null;
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        Map<String, Object> map = document.getData();
+                        assert map != null;
+                        uri = map.get("profilePic").toString();
+                        Picasso.get().load(Uri.parse(uri)).into(binding.profileImage);
+                        binding.name.setText(map.get("name").toString());
+                        binding.nickname.setText("닉네임 : " + map.get("nickname").toString());
+                        binding.phoneNumber.setText("휴대폰 번호 : " + map.get("phone").toString());
+                        binding.birth.setText("생일 : " + map.get("birth").toString());
 
+                        otherUid = map.get("otherUid").toString();
+                        Log.d(TAG, map.get("check").toString());
 
-
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
 }

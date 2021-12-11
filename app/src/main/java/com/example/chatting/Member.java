@@ -6,15 +6,24 @@ public class Member {
     private String phone;
     private String birth;
     private String profilePic;
+    private Boolean check;
+    private String email;
+    private String chattingRoom;
+    private String fcmToken;
+    private String otherUid;
 
-    public Member(String name, String nickname, String phone, String birth, String profilePic) {
+    public Member(String email, String name, String nickname, String phone, String birth, String profilePic, Boolean check, String chattingRoom, String fcmToken, String otherUid) {
         this.name = name;
         this.nickname = nickname;
         this.phone = phone;
         this.birth = birth;
         this.profilePic = profilePic;
+        this.check = check;
+        this.email = email;
+        this.chattingRoom = chattingRoom;
+        this.fcmToken = fcmToken;
+        this.otherUid = otherUid;
     }
-
 
 
     public String getName() {
@@ -52,4 +61,44 @@ public class Member {
     public String getProfilePic() { return profilePic; }
 
     public void setProfilePic(String profilePic) { this.profilePic = profilePic; }
+
+    public Boolean getCheck() {
+        return check;
+    }
+
+    public void setCheck(Boolean check) {
+        this.check = check;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getChattingRoom() {
+        return chattingRoom;
+    }
+
+    public void setChattingRoom(String chattingRoom) {
+        this.chattingRoom = chattingRoom;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+
+    public String getOtherUid() {
+        return otherUid;
+    }
+
+    public void setOtherUid(String otherUid) {
+        this.otherUid = otherUid;
+    }
 }

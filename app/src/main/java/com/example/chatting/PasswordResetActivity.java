@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.chatting.databinding.ActivityAddboardBinding;
+import com.example.chatting.databinding.ActivityPasswordResetBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,16 +25,17 @@ public class PasswordResetActivity extends AppCompatActivity {
 
     Button send;
     FirebaseAuth mAuth;
+    ActivityPasswordResetBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_password_reset);
+        binding = ActivityPasswordResetBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         mAuth = FirebaseAuth.getInstance();
 
-        send = findViewById(R.id.send);
-        send.setOnClickListener(new View.OnClickListener() {
+        binding.send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 send();
@@ -42,8 +45,7 @@ public class PasswordResetActivity extends AppCompatActivity {
     }
 
     private void send() {
-        String email = ((EditText) findViewById(R.id.EditText_name)).getText().toString();
-
+        String email = binding.EditTextName.getText().toString();
 
         if(email.length() > 0) {
             mAuth.sendPasswordResetEmail(email)

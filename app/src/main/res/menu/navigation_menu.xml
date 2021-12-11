@@ -9,6 +9,12 @@
         android:title="프로필 보기"/>
 
     <item
+        android:id="@+id/action_board"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_photo_library_24"
+        android:title="스토리"/>
+
+    <item
         android:id="@+id/action_chatting"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_message_24"
