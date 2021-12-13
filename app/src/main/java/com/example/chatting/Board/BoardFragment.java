@@ -86,6 +86,13 @@ public class BoardFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        boardAdapter.items.clear();
+        setBoard();
+        super.onResume();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
@@ -98,7 +105,6 @@ public class BoardFragment extends Fragment {
         View v = binding.getRoot();
 
         initRecyclerView();
-        setMyInfo();
 
         binding.addbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,7 +128,7 @@ public class BoardFragment extends Fragment {
         binding.rv.setAdapter(boardAdapter);
     }
 
-    private void setMyInfo() {
+    private void setBoard() {
         DocumentReference docRef = db.collection("user").document(user.getUid());
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @SuppressLint("SetTextI18n")
@@ -146,12 +152,14 @@ public class BoardFragment extends Fragment {
                                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                                         Map<String, Object> map = document.getData();
 
+                                        String timeKey = map.get("timeKey").toString();
                                         String title = map.get("title").toString();
                                         String text = map.get("text").toString();
                                         String time = map.get("time").toString();
                                         String picture = map.get("picture").toString();
+                                        String key = map.get("key").toString();
 
-                                        boardAdapter.addBoard(new Board(title, time, text, picture));
+                                        boardAdapter.addBoard(new Board(key, title, time, text, picture, timeKey));
                                         boardAdapter.notifyDataSetChanged();
                                     }
 

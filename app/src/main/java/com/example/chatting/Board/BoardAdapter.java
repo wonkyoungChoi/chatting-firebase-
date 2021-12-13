@@ -57,18 +57,21 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.MyViewHolder
         mBinding.layoutBoard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("===Click", "CLICK");
                 Intent intent = new Intent(mBinding.layoutBoard.getContext(), InBoardActivity.class);
 
+                String key = board.getKey();
                 String title = board.getTitle();
                 String text = board.getText();
                 String time = board.getTime();
                 String picture = board.getPicture();
+                String timeKey = board.getTimeKey();
 
                 intent.putExtra("title", title);
                 intent.putExtra("text", text);
                 intent.putExtra("time", time);
                 intent.putExtra("picture", picture);
+                intent.putExtra("key", key);
+                intent.putExtra("timeKey", timeKey);
 
 
                 mBinding.layoutBoard.getContext().startActivity(intent);

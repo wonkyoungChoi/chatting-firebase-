@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.chatting.ProfileFragment;
+import com.example.chatting.R;
 import com.example.chatting.databinding.FragmentChattingBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -71,8 +72,8 @@ public class ChattingFragment extends Fragment {
 
     String otherToken;
 
-    private static final String FCM_MESSAGE_URL = "https://fcm.googleapis.com/fcm/send";
-    private static final String SERVER_KEY = "AAAA31ZQ2Q8:APA91bH34l5MkyFv8K9cK3s2__Rjjm42JvOUqLkuhUv3T0-uTU0DVR2yEaezJAt_WoUhXci3eaCoiZc5qE7tU6Z_ioc9wDAKqih4PLi8pQ5c6wdrVkRUoc4Yp8unzHWSRsOmae75JtaM";
+    private final String FCM_MESSAGE_URL = getResources().getString(R.string.fcm_url);
+    private final String SERVER_KEY = getResources().getString(R.string.fcm_key);
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -178,11 +179,8 @@ public class ChattingFragment extends Fragment {
 
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    assert document != null;
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Map<String, Object> map = document.getData();
-                        assert map != null;
                         chattingRoom = map.get("chattingRoom").toString().replace(".", ",");
 
                         childEventListener = new ChildEventListener() {

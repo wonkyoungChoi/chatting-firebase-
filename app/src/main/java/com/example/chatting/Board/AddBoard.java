@@ -31,14 +31,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 
 public class AddBoard extends AppCompatActivity {
-    Uri file;
-    public String title, time;
     private ActivityAddboardBinding binding;
     Uri uri, downloadUri;
     String downuri;
@@ -49,6 +48,13 @@ public class AddBoard extends AppCompatActivity {
 
     long now;
 
+    FirebaseFirestore db;
+
+    String key, in_title, in_text, in_time, in_picture, in_timeKey;
+    String title, text, time;
+
+    Boolean update = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +62,12 @@ public class AddBoard extends AppCompatActivity {
 
         binding = ActivityAddboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        key = getIntent().getStringExtra("key");
+
+        boardUpdateSet();
+
+
 
         now = System.currentTimeMillis();
 
@@ -82,7 +94,7 @@ public class AddBoard extends AppCompatActivity {
         binding.upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boardUpdate();
+                uploadData();
             }
         });
     }
@@ -139,37 +151,85 @@ public class AddBoard extends AppCompatActivity {
         });
     }
 
-    private void boardUpdate() {
-        String title = binding.addboardTitle.getText().toString();
-        String text = binding.addboardText.getText().toString();
-        String time = binding.date.getText().toString();
+    private void boardUpdateSet() {
+        if(getIntent().getStringExtra("title") != null) {
+            in_title = getIntent().getStringExtra("title");
+            in_text = getIntent().getStringExtra("text");
+            in_picture = getIntent().getStringExtra("picture");
+            in_time = getIntent().getStringExtra("time");
+            in_timeKey = getIntent().getStringExtra("timeKey");
+
+            binding.addboardTitle.setText(in_title);
+            binding.addboardText.setText(in_text);
+            binding.date.setText(in_time);
+            binding.date.setTextColor(getResources().getColor(R.color.black));
+            Picasso.get().load(Uri.parse(in_picture)).into(binding.addImageView);
+
+            update = true;
+
+            Log.d("===key", in_timeKey);
+            Log.d("===picture", in_picture);
+        }
+    }
+
+
+
+    private void uploadData() {
+        title = binding.addboardTitle.getText().toString();
+        text = binding.addboardText.getText().toString();
+        time = binding.date.getText().toString();
 
         if(title.length() > 0 && text.length() > 0 && time.length() > 8 && downuri != null) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            Board board = new Board(title, time, text, downuri);
+            db = FirebaseFirestore.getInstance();
 
-            if(user != null) {
-                db.collection(getIntent().getStringExtra("key")).document(String.valueOf(now)).set(board)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                startToast("스토리 등록을 성공하였습니다.");
-                                myStartActivity(MainFragment.class);
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                startToast("스토리 등록에 실패하였습니다.");
-                            }
-                        });
+            if(update) {
+                boardUpdate();
+            } else {
+                boardUpload();
             }
 
         } else {
             startToast("스토리를 정확하게 입력해주세요." );
         }
+    }
+
+
+    private void boardUpdate() {
+        Board board = new Board(key, title, time, text, downuri, in_timeKey);
+        db.collection(key).document(in_timeKey).set(board)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        startToast("스토리 수정을 성공하였습니다.");
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        startToast("스토리 등록에 실패하였습니다.");
+                    }
+                });
+    }
+
+
+    private void boardUpload() {
+        Board board = new Board(key, title, time, text, downuri, String.valueOf(now));
+        db.collection(key).document(String.valueOf(now)).set(board)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        startToast("스토리 등록을 성공하였습니다.");
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        startToast("스토리 등록에 실패하였습니다.");
+                    }
+                });
     }
 
 
@@ -196,13 +256,6 @@ public class AddBoard extends AppCompatActivity {
             }
         }
     }
-
-    private void myStartActivity(Class c) {
-        Intent intent = new Intent(getApplicationContext(), c);
-        startActivity(intent);
-        finish();
-    }
-
 
     private void startToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();

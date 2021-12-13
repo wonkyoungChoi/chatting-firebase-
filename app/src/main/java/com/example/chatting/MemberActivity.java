@@ -92,7 +92,7 @@ public class MemberActivity extends AppCompatActivity {
                 mProgressDialog = new ProgressDialog(this);
                 mProgressDialog.setMessage("업로드 중...");
                 mProgressDialog.show();
-                showUserProfile.setImageBitmap(bitmap);
+                binding.showUserProfile.setImageBitmap(bitmap);
                 addUserInDatabse();
 
             } catch (IOException e) {

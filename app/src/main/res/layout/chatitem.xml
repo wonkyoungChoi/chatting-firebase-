@@ -66,7 +66,7 @@
             android:textSize="8sp"
             android:layout_marginLeft="10dp"
             android:layout_alignBottom="@+id/TextView_othermsg"
-            android:textColor="#D3D3D3"/>
+            android:textColor="#464646"/>
 
 
     </RelativeLayout>
@@ -101,7 +101,7 @@
             android:textSize="8sp"
             android:layout_marginRight="10dp"
             android:layout_alignBottom="@+id/TextView_mymsg"
-            android:textColor="#D3D3D3"
+            android:textColor="#464646"
             android:layout_toLeftOf="@+id/TextView_mymsg" />
 
 

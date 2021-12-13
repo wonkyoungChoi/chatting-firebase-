@@ -20,4 +20,6 @@
     <string name="login_failed">"Login failed"</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fcm_key">"AAAA31ZQ2Q8:APA91bH34l5MkyFv8K9cK3s2__Rjjm42JvOUqLkuhUv3T0-uTU0DVR2yEaezJAt_WoUhXci3eaCoiZc5qE7tU6Z_ioc9wDAKqih4PLi8pQ5c6wdrVkRUoc4Yp8unzHWSRsOmae75JtaM"</string>
+    <string name="fcm_url">"https://fcm.googleapis.com/fcm/send"</string>
 </resources>

@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Chatting">
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".Intro"
             android:theme="@style/Theme.Chatting.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,6 +26,7 @@
         <activity android:name=".MemberActivity" />
         <activity android:name=".Board.AddBoard"/>
         <activity android:name=".Board.InBoardActivity"/>
+        <activity android:name=".LoginActivity"/>
         <service
             android:name="MyFirebaseMessagingService"
             android:exported="false">
