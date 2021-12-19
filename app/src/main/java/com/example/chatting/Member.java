@@ -11,8 +11,9 @@ public class Member {
     private String chattingRoom;
     private String fcmToken;
     private String otherUid;
+    private Long dDay;
 
-    public Member(String email, String name, String nickname, String phone, String birth, String profilePic, Boolean check, String chattingRoom, String fcmToken, String otherUid) {
+    public Member(String email, String name, String nickname, String phone, String birth, String profilePic, Boolean check, String chattingRoom, String fcmToken, String otherUid, Long dDay) {
         this.name = name;
         this.nickname = nickname;
         this.phone = phone;
@@ -23,6 +24,7 @@ public class Member {
         this.chattingRoom = chattingRoom;
         this.fcmToken = fcmToken;
         this.otherUid = otherUid;
+        this.dDay = dDay;
     }
 
 
@@ -100,5 +102,13 @@ public class Member {
 
     public void setOtherUid(String otherUid) {
         this.otherUid = otherUid;
+    }
+
+    public Long getdDay() {
+        return dDay;
+    }
+
+    public void setdDay(Long dDay) {
+        this.dDay = dDay;
     }
 }

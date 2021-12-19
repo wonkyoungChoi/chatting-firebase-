@@ -162,7 +162,7 @@ public class MemberActivity extends AppCompatActivity {
             FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
                 @Override
                 public void onComplete(@NonNull Task<String> task) {
-                    Member member = new Member(user.getEmail(), name, nickname, phone, birth, downuri, false, "", task.getResult(), "");
+                    Member member = new Member(user.getEmail(), name, nickname, phone, birth, downuri, false, "", task.getResult(), "", null);
 
                     if(user != null) {
                         db.collection("user").document(user.getUid()).set(member)

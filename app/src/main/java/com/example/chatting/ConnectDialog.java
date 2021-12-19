@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.chatting.databinding.ConnectDialogBinding;
 
@@ -51,4 +52,5 @@ public class ConnectDialog extends Dialog {
             }
         });
     }
+
 }

@@ -2,6 +2,7 @@ package com.example.chatting;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,12 +11,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.example.chatting.databinding.FragmentProfileBinding;
@@ -24,6 +27,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -36,6 +40,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,10 +65,22 @@ public class ProfileFragment extends Fragment {
     Bitmap bitmap;
     ProgressDialog mProgressDialog;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    Boolean checkProfile = true;
 
     FragmentProfileBinding binding;
 
     public static String otherUid;
+
+    String myProfileUrl, otherProfileUrl;
+
+
+    // 현재 날짜를 알기 위해 사용
+    Calendar calendar;
+    int currentYear, currentMonth, currentDay;
+
+    // Millisecond 형태의 하루(24 시간)
+    private final int ONE_DAY = 24 * 60 * 60 * 1000;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -96,6 +113,7 @@ public class ProfileFragment extends Fragment {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,19 +132,35 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View v = binding.getRoot();
 
+        binding.loading.playAnimation();
 
-        setMyInfo();
+        setCalendar();
+        setInfo(user.getUid());
+        initTabLayout();
+
+        //datePicker : 디데이 날짜 입력하는 버튼, 클릭시 DatePickerDialog 띄우기
+        binding.dDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(getContext(), endDateSetListener, (currentYear), (currentMonth), currentDay).show();
+            }
+        });
+
 
         binding.profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                // Show only images, no videos or anything else
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                // Always show the chooser (if there are multiple options available)
+                if(checkProfile) {
+                    Intent intent = new Intent();
+                    // Show only images, no videos or anything else
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    // Always show the chooser (if there are multiple options available)
 
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+                    startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+                } else {
+                    Toast.makeText(getContext(), "상대방의 프로필은 변경할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -217,8 +251,93 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void setMyInfo() {
-        DocumentReference docRef = db.collection("user").document(user.getUid());
+    private void initTabLayout() {
+        binding.tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch(tab.getPosition()) {
+                    case 0:
+                        Log.d("Position", "0");
+                        setInfo(user.getUid());
+                        checkProfile = true;
+                        break;
+                    case 1:
+                        Log.d("Position", "1");
+                        setInfo(otherUid);
+                        checkProfile = false;
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    private void setCalendar() {
+        //시작일, 종료일 데이터 저장
+        calendar = Calendar.getInstance();
+        currentYear = calendar.get(Calendar.YEAR);
+        currentMonth = (calendar.get(Calendar.MONTH));
+        currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+
+    private DatePickerDialog.OnDateSetListener endDateSetListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            binding.dDay.setText(getDday(year, monthOfYear, dayOfMonth));
+        }
+    };
+
+    private String getDday(int mYear, int mMonthOfYear, int mDayOfMonth) {
+
+        // D-day 설정
+        final Calendar ddayCalendar = Calendar.getInstance();
+        ddayCalendar.set(mYear, mMonthOfYear, mDayOfMonth);
+
+        // D-day 를 구하기 위해 millisecond 으로 환산하여 d-day 에서 today 의 차를 구한다.
+        final long dday = ddayCalendar.getTimeInMillis() / ONE_DAY;
+        final long today = Calendar.getInstance().getTimeInMillis() / ONE_DAY;
+        long result = dday - today;
+
+        setDay(dday);
+
+        return formatDay(result);
+    }
+
+    private String formatDay(long result) {
+        String strFormat;
+        if (result > 0) {
+            strFormat = "D-%d";
+        } else if (result == 0) {
+            strFormat = "Today";
+        } else {
+            result *= -1;
+            strFormat = "D+%d";
+        }
+
+        return (String.format(strFormat, result));
+    }
+
+
+
+    private void setDay (long dday) {
+        db.collection("user").document(user.getUid()).update("dDay", dday);
+        db.collection("user").document(otherUid).update("dDay", dday);
+    }
+
+
+
+    private void setInfo(String uid) {
+        DocumentReference docRef = db.collection("user").document(uid);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -231,13 +350,27 @@ public class ProfileFragment extends Fragment {
                         Map<String, Object> map = document.getData();
                         assert map != null;
                         uri = map.get("profilePic").toString();
+
                         Picasso.get().load(Uri.parse(uri)).into(binding.profileImage);
                         binding.name.setText(map.get("name").toString());
                         binding.nickname.setText("닉네임 : " + map.get("nickname").toString());
                         binding.phoneNumber.setText("휴대폰 번호 : " + map.get("phone").toString());
                         binding.birth.setText("생일 : " + map.get("birth").toString());
+                        if(map.get("dDay") != null) {
+                            final long today = Calendar.getInstance().getTimeInMillis() / ONE_DAY;
+                            long result = Long.parseLong(map.get("dDay").toString())  - today;
+                            binding.dDay.setText(formatDay(result));
+                        }
 
-                        otherUid = map.get("otherUid").toString();
+                        if(uid.equals(user.getUid())) {
+                            if(!map.get("otherUid").toString().equals("")) {
+                                Log.d("Check", "Check");
+                                otherUid = map.get("otherUid").toString();
+                                myProfileUrl = uri;
+                                Picasso.get().load(Uri.parse(myProfileUrl)).into(binding.myProfile);
+                                setOtherProfile();
+                            }
+                        }
                         Log.d(TAG, map.get("check").toString());
 
                     } else {
@@ -249,4 +382,22 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
+
+    private void setOtherProfile() {
+        DocumentReference doc = db.collection("user").document(otherUid);
+        doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        Map<String, Object> map = document.getData();
+                        otherProfileUrl = map.get("profilePic").toString();
+                        Picasso.get().load(Uri.parse(otherProfileUrl)).into(binding.otherProfile);
+                    }
+                }
+            }
+        });
+    }
+
 }

@@ -1,5 +1,8 @@
 package com.example.chatting;
 
+import android.app.Fragment;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -12,7 +15,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.chatting.Board.BoardFragment;
-import com.example.chatting.Chatting.ChatAdapter;
 import com.example.chatting.Chatting.ChattingFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -42,6 +44,8 @@ public class MainFragment extends AppCompatActivity {
     Boolean check = false;
     ArrayList<Info> emailList;
 
+    BottomNavigationView bottomNavigationView;
+
     private static final String TAG = "MainActivity";
 
     @Override
@@ -60,7 +64,7 @@ public class MainFragment extends AppCompatActivity {
         getUserInfo();
 
         // 바텀 네비게이션 뷰
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -121,6 +125,7 @@ public class MainFragment extends AppCompatActivity {
         }
     }
 
+
     private void getUserInfo() {
         emailList = new ArrayList<>();
         db.collection("user")
@@ -166,6 +171,9 @@ public class MainFragment extends AppCompatActivity {
                             db.collection("user").document(emailList.get(i).getUid()).update("otherUid", user.getUid());
 
                             Toast.makeText(getApplicationContext(), "연결완료", Toast.LENGTH_SHORT).show();
+                            finish();
+                            Intent intent = new Intent(getApplicationContext(), MainFragment.class);
+                            startActivity(intent);
                         }
                     }
                 } else {
@@ -180,6 +188,7 @@ public class MainFragment extends AppCompatActivity {
 
             @Override
             public void onCheckClick() {
+                Boolean temp = false;
                 otherEmail = dialog.binding.otherEmail.getText().toString();
                 for(int i=0; i<emailList.size(); i++) {
                     if(emailList.get(i).email.equals(otherEmail)) {
@@ -195,11 +204,12 @@ public class MainFragment extends AppCompatActivity {
                                                 Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                                                 Map<String, Object> map = document.getData();
                                                 Log.d(TAG, map.get("check").toString());
+
                                                 if(!(Boolean) map.get("check")) {
                                                     Toast.makeText(getApplicationContext(), "연결이 가능한 상대입니다.", Toast.LENGTH_SHORT).show();
                                                     check = true;
 
-                                                } else {
+                                                } else if((Boolean) map.get("check")){
                                                     Toast.makeText(getApplicationContext(), "연결이 불가능한 상대입니다.", Toast.LENGTH_SHORT).show();
                                                     check = false;
                                                 }
@@ -213,7 +223,12 @@ public class MainFragment extends AppCompatActivity {
                                         }
                                     }
                                 });
+                        temp = true;
                     }
+                }
+                if(!temp) {
+                    Toast.makeText(getApplicationContext(), "존재하지 않는 상대입니다.", Toast.LENGTH_SHORT).show();
+                    check = false;
                 }
             }
         });
