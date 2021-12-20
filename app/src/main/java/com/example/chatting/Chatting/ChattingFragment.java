@@ -72,8 +72,8 @@ public class ChattingFragment extends Fragment {
 
     String otherToken;
 
-    private String FCM_MESSAGE_URL;
-    private String SERVER_KEY;
+    private final String FCM_MESSAGE_URL = "https://fcm.googleapis.com/fcm/send";
+    private final String SERVER_KEY = "AAAA31ZQ2Q8:APA91bH34l5MkyFv8K9cK3s2__Rjjm42JvOUqLkuhUv3T0-uTU0DVR2yEaezJAt_WoUhXci3eaCoiZc5qE7tU6Z_ioc9wDAKqih4PLi8pQ5c6wdrVkRUoc4Yp8unzHWSRsOmae75JtaM";
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -112,8 +112,6 @@ public class ChattingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            FCM_MESSAGE_URL = getActivity().getResources().getString(R.string.fcm_url);
-            SERVER_KEY = getActivity().getResources().getString(R.string.fcm_key);
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }

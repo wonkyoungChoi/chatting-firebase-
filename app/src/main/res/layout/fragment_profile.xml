@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#fff5f5"
     android:orientation="vertical"
     tools:context=".ProfileFragment">
 
@@ -53,8 +54,9 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:visibility="visible"
-                    app:lottie_speed="1"
+                    app:lottie_speed="1.5"
                     app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
                     app:lottie_rawRes="@raw/heart" />
 
                 <TextView

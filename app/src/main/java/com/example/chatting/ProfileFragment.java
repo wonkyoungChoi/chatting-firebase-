@@ -186,7 +186,7 @@ public class ProfileFragment extends Fragment {
 
                 mProgressDialog.setMessage("업로드 중...");
                 mProgressDialog.show();
-                binding.profileImage.setImageBitmap(bitmap);
+
                 addUserInDatabase();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -233,6 +233,8 @@ public class ProfileFragment extends Fragment {
                                     public void onSuccess(Void aVoid) {
                                         Log.d(TAG, "DocumentSnapshot successfully written!");
                                         mProgressDialog.dismiss();
+                                        binding.profileImage.setImageBitmap(bitmap);
+                                        binding.myProfile.setImageBitmap(bitmap);
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {

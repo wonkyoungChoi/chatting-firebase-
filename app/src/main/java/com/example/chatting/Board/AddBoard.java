@@ -164,6 +164,7 @@ public class AddBoard extends AppCompatActivity {
             binding.date.setText(in_time);
             binding.date.setTextColor(getResources().getColor(R.color.black));
             Picasso.get().load(Uri.parse(in_picture)).into(binding.addImageView);
+            downuri = getIntent().getStringExtra("picture");
 
             update = true;
 
@@ -178,6 +179,11 @@ public class AddBoard extends AppCompatActivity {
         title = binding.addboardTitle.getText().toString();
         text = binding.addboardText.getText().toString();
         time = binding.date.getText().toString();
+
+        Log.d("title", title);
+        Log.d("text", text);
+        Log.d("time", time);
+        Log.d("downuri", downuri);
 
         if(title.length() > 0 && text.length() > 0 && time.length() > 8 && downuri != null) {
 

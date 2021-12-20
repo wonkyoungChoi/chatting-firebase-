@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 
@@ -93,9 +94,16 @@ public class LoginActivity extends AppCompatActivity {
                                                     if (document != null) {
                                                         if (document.exists()) {
                                                             ChatAdapter.nick = document.get("nickname").toString();
-                                                            startToast("로그인에 성공하였습니다.");
-                                                            myStartActivity(MainFragment.class);
-                                                            finish();
+                                                            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<String> task) {
+                                                                    db.collection("user").document(user.getUid()).update("fcmToken", task.getResult());
+                                                                    startToast("로그인에 성공하였습니다.");
+                                                                    myStartActivity(MainFragment.class);
+                                                                    finish();
+                                                                }
+                                                            });
+
                                                         } else {
                                                             Log.d(TAG, "No such document");
                                                             myStartActivity(MemberActivity.class);
