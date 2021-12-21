@@ -132,7 +132,7 @@ public class ChattingFragment extends Fragment {
         View v = binding.getRoot();
 
         initRecyclerview();
-        setMyInfo();
+        setMyChatting();
 
 
         binding.send.setOnClickListener(new View.OnClickListener() {
@@ -169,7 +169,7 @@ public class ChattingFragment extends Fragment {
         binding.EditTextChat.setText(null);
     }
 
-    private void setMyInfo() {
+    private void setMyChatting() {
 
         DocumentReference docRef = db.collection("user").document(user.getUid());
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.chatting.Chatting.ChatAdapter;
 import com.example.chatting.databinding.FragmentSettingBinding;
@@ -72,9 +73,11 @@ public class SettingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
-
+                getActivity().finish();
+                Toast.makeText(getContext(), "로그아웃에 성공하였습니다.", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(),LoginActivity.class);
                 startActivity(intent);
+
             }
         });
 

@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
         android:gravity="center"
+        android:textColor="@color/red"
         android:text="회원정보"
         android:textSize="50sp" />
 
@@ -89,6 +90,7 @@
 
     <Button
         android:id="@+id/checkButton"
+        android:background="@drawable/login_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="start"

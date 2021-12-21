@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.chatting.databinding.ActivityMemberInitBinding;
+import com.example.chatting.databinding.RegisterBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -24,19 +26,19 @@ import com.google.firebase.auth.FirebaseUser;
 import java.io.IOException;
 
 public class Register extends AppCompatActivity {
-    Button register;
     FirebaseAuth mAuth;
     private static final String TAG = "Register";
+    RegisterBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.register);
+        binding = RegisterBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         mAuth = FirebaseAuth.getInstance();
 
-        register = (Button) findViewById(R.id.Button_register);
-        register.setOnClickListener(new View.OnClickListener() {
+        binding.ButtonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                     signUp();
@@ -54,9 +56,9 @@ public class Register extends AppCompatActivity {
 
     private void signUp() {
 
-        String email = ((EditText) findViewById(R.id.EditText_name)).getText().toString();
-        String password = ((EditText) findViewById(R.id.EditText_password)).getText().toString();
-        String passwordcheck = ((EditText) findViewById(R.id.EditText_passwordcheck)).getText().toString();
+        String email = binding.EditTextName.getText().toString();
+        String password = binding.EditTextPassword.getText().toString();
+        String passwordcheck = binding.EditTextPasswordcheck.getText().toString();
 
         if(email.length() >0 && password.length() >0 && passwordcheck.length()>0) {
             if (password.equals(passwordcheck)) {

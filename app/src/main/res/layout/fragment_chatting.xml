@@ -9,6 +9,28 @@
     tools:context=".Chatting.ChattingFragment"
     android:weightSum="1">
 
+    <RelativeLayout
+        android:id="@+id/search"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:elevation="2dp"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:textSize="20sp"
+            android:textColor="#191919"
+            android:textStyle="bold"
+            android:text="둘만의 채팅"
+            android:layout_marginLeft="20dp" />
+
+    </RelativeLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:orientation="vertical"
